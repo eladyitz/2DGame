@@ -3,6 +3,7 @@ package com.eladyitz.dayinhell;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
@@ -11,6 +12,10 @@ import java.awt.image.DataBufferInt;
 import javax.swing.JFrame;
 
 import com.eladyitz.dayinhell.input.KeyBoard;
+import com.eladyitz.dayinhell.level.Level;
+import com.eladyitz.dayinhell.level.RandomLevel;
+import com.eladyitz.dayinhell.level.SpawnLevel;
+import com.eladyitz.dayinhell.entity.mob.player.Player;
 import com.eladyitz.dayinhell.graphics.Screen
 ;
 public class Game extends Canvas implements Runnable  {
@@ -24,6 +29,8 @@ public class Game extends Canvas implements Runnable  {
 	private Thread thread;
 	private JFrame frame;
 	private KeyBoard key;
+	private Level level;
+	private Player player;
 	private boolean running = false;
 	
 	private Screen screen;
@@ -39,6 +46,8 @@ public class Game extends Canvas implements Runnable  {
 		frame = new JFrame();
 		screen = new Screen(width, height);
 		key = new KeyBoard();
+		level = new SpawnLevel("/textures/level.png");
+		player = new Player(6 * 16, 7 * 16, key);
 		
 		addKeyListener(key);
 	}
@@ -89,15 +98,11 @@ public class Game extends Canvas implements Runnable  {
 		
 		stop();
 	}
-	
-	public int x , y = 0;
-	
+		
 	public void update() {
 		key.update();
-		if (key.up)    y--;
-		if (key.down)  y++;
-		if (key.left)  x--;
-		if (key.right) x++;
+		player.update();
+
 	}
 	
 	public void render() {
@@ -108,16 +113,22 @@ public class Game extends Canvas implements Runnable  {
 		}
 		
 		screen.clear();
-		screen.render(x, y);
+		int xScroll = player.x - screen.width / 2;
+		int yScroll = player.y - screen.height / 2;
+		level.render(xScroll, yScroll, screen);
+		player.render(screen);
 		
 		for (int i = 0; i < pixels.length; i++) {
 			pixels[i] = screen.pixels[i];
 		}
 		
 		Graphics g = bs.getDrawGraphics();
-		g.setColor(Color.BLACK);
-		g.fillRect(0, 0, getWidth(), getHeight());
+		//g.setColor(Color.BLACK);
+		//g.fillRect(0, 0, getWidth(), getHeight());
 		g.drawImage(image, 0, 0, getWidth(), getHeight(), null);
+		g.setColor(Color.WHITE);
+		g.setFont(new Font("Verdana", 0, 50));
+		g.drawString("X: " + player.x + ", Y: " + player.y, 350, 300);
 		g.dispose();
 		bs.show();
 	}

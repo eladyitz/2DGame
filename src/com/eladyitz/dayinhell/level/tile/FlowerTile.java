@@ -3,9 +3,9 @@ package com.eladyitz.dayinhell.level.tile;
 import com.eladyitz.dayinhell.graphics.Screen;
 import com.eladyitz.dayinhell.graphics.Sprite;
 
-public class GrassTile extends Tile {
+public class FlowerTile extends Tile {
 
-	public GrassTile(Sprite sprite) {
+	public FlowerTile(Sprite sprite) {
 		super(sprite);
 	}
 		
